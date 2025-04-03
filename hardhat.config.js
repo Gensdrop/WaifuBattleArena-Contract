@@ -6,44 +6,44 @@ const { PRIVATE_KEY } = process.env;
 
 module.exports = {
   solidity: {
-    version: "0.8.28", // Sesuai kontrak WaifuBattleArena
+    version: "0.8.28",
     settings: {
       optimizer: {
         enabled: true,
-        runs: 200 // Dari config lu, optimize gas
+        runs: 200
       },
-      viaIR: true, // Dari config lu, buat kontrak gede
+      viaIR: true,
       metadata: {
-        bytecodeHash: "none", // Dari config pertama, cocok buat Monad Testnet
-        useLiteralContent: true // Dari kedua config, Sourcify suka ini
+        bytecodeHash: "none",
+        useLiteralContent: true
       }
     }
   },
   networks: {
-    monadTestnet: { // Nama dari config pertama, lebih jelas
-      url: "https://testnet-rpc.monad.xyz", // Sama di kedua config
-      chainId: 10143, // Sama di kedua config
-      accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [], // Dari config lu
-      gas: 30000000, // Dari config lu, cukup buat kontrak gede
-      gasPrice: "auto" // Dari config lu
+    monadTestnet: {
+      url: "https://testnet-rpc.monad.xyz",
+      chainId: 10143,
+      accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
+      gas: 30000000,
+      gasPrice: "auto"
     },
-    hardhat: { // Dari config lu
+    hardhat: {
       chainId: 31337,
-      allowUnlimitedContractSize: true, // Biar kontrak gede bisa di-test lokal
+      allowUnlimitedContractSize: true,
       gas: 30000000
     }
   },
   sourcify: {
-    enabled: true, // Dari kedua config
-    apiUrl: "https://sourcify-api-monad.blockvision.org", // Dari config pertama, khusus Monad
-    browserUrl: "https://testnet.monadexplorer.com" // Dari config pertama, cocok Monad Testnet
+    enabled: true,
+    apiUrl: "https://sourcify-api-monad.blockvision.org",
+    browserUrl: "https://testnet.monadexplorer.com"
   },
   etherscan: {
-    enabled: false // Dari config pertama, disable biar ga error di Monad
+    enabled: false
   },
   contractSizer: {
-    alphaSort: true, // Dari config lu
-    runOnCompile: false, // Dari config lu
-    disambiguatePaths: false // Dari config lu
+    alphaSort: true,
+    runOnCompile: false,
+    disambiguatePaths: false
   }
 };

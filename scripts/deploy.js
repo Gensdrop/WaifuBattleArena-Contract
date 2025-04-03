@@ -1,24 +1,29 @@
-const { ethers } = require("ethers");                                      const fs = require("fs");                                                  const path = require("path");                                              require("dotenv").config();                                                const hre = require("hardhat");
+const { ethers } = require("ethers");
+const fs = require("fs");
+const path = require("path");
+require("dotenv").config();
+const hre = require("hardhat");
 
 async function main() {
     const privateKey = process.env.PRIVATE_KEY;
-    console.log("Private key dari .env:", privateKey);
+    console.log("Private key from .env:", privateKey);
     if (!privateKey || !privateKey.startsWith("0x") || privateKey.length !== 66) {
-        throw new Error("Private key ga valid! Cek .env, harus 64 hex chars mulai 0x.");
+        throw new Error("Invalid private key! Check .env, must be 64 hex chars starting with 0x.");
     }
-                                                                               const provider = new ethers.JsonRpcProvider("https://testnet-rpc.monad.xyz/");
+
+    const provider = new ethers.JsonRpcProvider("https://testnet-rpc.monad.xyz/");
     const deployer = new ethers.Wallet(privateKey, provider);
-    console.log("Deploy pake akun:", deployer.address);
+    console.log("Deploying using account:", deployer.address);
 
     const balance = await provider.getBalance(deployer.address);
-    console.log("Saldo akun sebelum deploy:", ethers.formatEther(balance), "MON");
+    console.log("Account balance before deploy:", ethers.formatEther(balance), "MON");
 
     const artifactPath = path.resolve(__dirname, "../artifacts/contracts/WaifuBattleArena.sol/WaifuBattleArena.json");
     const artifact = JSON.parse(fs.readFileSync(artifactPath, "utf8"));
     const bytecode = artifact.bytecode;
-    console.log("Ukuran initcode:", bytecode.length / 2, "bytes");
+    console.log("Initcode size:", bytecode.length / 2, "bytes");
 
-    console.log("Lagi deploy WaifuBattleArena...");
+    console.log("Deploying WaifuBattleArena...");
     const tx = {
         data: bytecode,
         gasLimit: 30000000
@@ -26,18 +31,18 @@ async function main() {
     const txResponse = await deployer.sendTransaction(tx);
     const receipt = await txResponse.wait();
     const contractAddress = receipt.contractAddress;
-    console.log("WaifuBattleArena berhasil deploy ke:", contractAddress);
+    console.log("WaifuBattleArena successfully deployed to:", contractAddress);
 
-    console.log("Mulai verifikasi kontrak...");
+    console.log("Starting contract verification...");
     try {
         await hre.run("verify:verify", {
             address: contractAddress,
             constructorArguments: [],
             network: "monad"
         });
-        console.log("Kontrak berhasil diverifikasi di Monad Explorer!");
+        console.log("Contract successfully verified on Monad Explorer!");
     } catch (error) {
-        console.log("Verifikasi gagal:", error.message);
+        console.log("Verification failed:", error.message);
     }
 }
 
